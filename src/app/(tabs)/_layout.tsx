@@ -1,20 +1,22 @@
-import { Tabs } from "expo-router";
 import React from "react";
+import { Tabs } from "expo-router";
 import { Map, Fish } from "lucide-react-native";
 import { StyleSheet, Text, View } from "react-native";
+
+import { Colors } from "@/constants/Colors";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#fff",
-        tabBarInactiveTintColor: "#fff",
+        tabBarActiveTintColor: Colors.dark.text,
+        tabBarInactiveTintColor: Colors.dark.text,
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#000",
+          backgroundColor: Colors.dark.background,
           height: 85,
           paddingTop: 15,
-          borderColor: "#000",
+          borderColor: Colors.dark.background,
         },
       }}
     >
@@ -60,12 +62,12 @@ const styles = StyleSheet.create({
   tabBarIcon: {
     flexDirection: "column",
     alignItems: "center",
-    backgroundColor: "#000",
+    backgroundColor: Colors.dark.background,
     paddingVertical: 4,
     width: 46,
     borderRadius: 8,
   },
   activeTabBarIcon: {
-    backgroundColor: "#4d4d4d",
+    backgroundColor: Colors.dark.tint,
   },
 });
