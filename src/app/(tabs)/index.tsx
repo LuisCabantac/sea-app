@@ -3,7 +3,7 @@ import { Colors } from "@/constants/Colors";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Pressable, StyleSheet, View, Text } from "react-native";
-import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
+import MapView, { PROVIDER_DEFAULT, Marker } from "react-native-maps";
 import { Fish, Locate, Navigation, Crown } from "lucide-react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
@@ -85,7 +85,7 @@ export default function HomeScreen() {
         <View style={{ flex: 1, position: "relative" }}>
           <MapView
             style={styles.map}
-            provider={PROVIDER_GOOGLE}
+            provider={PROVIDER_DEFAULT}
             initialRegion={initialRegion}
             customMapStyle={mapStyle}
             initialCamera={{
