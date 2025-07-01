@@ -1,7 +1,7 @@
 import Gemini from "gemini-ai";
 import { useEffect, useRef, useState } from "react";
 import Markdown from "react-native-markdown-display";
-import { ChevronDown, Fish, Send, User } from "lucide-react-native";
+import { ChevronDown, Fish, Send } from "lucide-react-native";
 import {
   Animated,
   NativeScrollEvent,
@@ -172,13 +172,6 @@ export default function CoachScreen() {
                   </Markdown>
                 )}
               </View>
-              {message.isUser &&
-                (index === messages.length - 1 ||
-                  messages[index + 1].isUser !== message.isUser) && (
-                  <View style={styles.messageIconContainer}>
-                    <User size={24} color={Colors.dark.text} />
-                  </View>
-                )}
               {message.isUser &&
                 !(
                   index === messages.length - 1 ||
