@@ -13,9 +13,19 @@ import { IRegion } from "@/types/markers";
 
 import BottomSheetItem from "@/components/BottomSheetItem";
 
+const initialRegion = {
+  latitude: 37.78825,
+  longitude: -122.4324,
+  latitudeDelta: 0.01,
+  longitudeDelta: 0.01,
+};
+
 export default function HomeScreen() {
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null
+  );
+  const [selectedLocation, setSelectedLocation] = useState<IRegion | null>(
+    initialRegion
   );
   const mapRef = useRef<MapView>(null);
 
@@ -37,28 +47,20 @@ export default function HomeScreen() {
     getUserCurrentLocation();
   }, []);
 
-  const initialRegion = {
-    latitude: 37.78825,
-    longitude: -122.4324,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
-  };
-
-  function focusMap() {
-    const newLocation = {
-      latitude: 37.78825,
-      longitude: -122.4324,
-      latitudeDelta: 0.01,
-      longitudeDelta: 0.01,
-    };
-
-    mapRef.current?.animateCamera(
-      { center: newLocation, zoom: 15 },
-      { duration: 500 }
+  function handleSetLocation(longitude: number, latitude: number) {
+    setSelectedLocation((currentLocation) =>
+      currentLocation
+        ? {
+            longitude: longitude,
+            latitude: latitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          }
+        : null
     );
   }
 
-  function focusUserCurrentLocation(currentLocation?: IRegion) {
+  function focusLocation(currentLocation?: IRegion) {
     getUserCurrentLocation();
 
     const defaultLocation = {
@@ -104,7 +106,13 @@ export default function HomeScreen() {
           >
             {markers.map((marker) => {
               return (
-                <Marker key={marker.id} coordinate={marker}>
+                <Marker
+                  key={marker.id}
+                  coordinate={marker}
+                  onPress={() =>
+                    handleSetLocation(marker.longitude, marker.latitude)
+                  }
+                >
                   <View
                     style={{
                       backgroundColor:
@@ -134,14 +142,18 @@ export default function HomeScreen() {
             })}
           </MapView>
           <View style={styles.mapControls}>
-            <Pressable onPress={focusMap}>
+            <Pressable
+              onPress={() =>
+                selectedLocation && focusLocation(selectedLocation)
+              }
+            >
               <Navigation
                 color={Colors.dark.tint}
                 style={{ transform: [{ rotate: "280deg" }] }}
                 fill={Colors.dark.tint}
               />
             </Pressable>
-            <Pressable onPress={() => focusUserCurrentLocation()}>
+            <Pressable onPress={() => focusLocation()}>
               <Locate color={Colors.dark.tint} />
             </Pressable>
           </View>
@@ -181,7 +193,8 @@ export default function HomeScreen() {
                 <BottomSheetItem
                   marker={marker.item}
                   location={location}
-                  onFocusUserCurrentLocation={focusUserCurrentLocation}
+                  onSetLocation={handleSetLocation}
+                  onFocusLocation={focusLocation}
                 />
               )}
             />

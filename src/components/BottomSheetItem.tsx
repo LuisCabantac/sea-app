@@ -9,21 +9,24 @@ import { IMarker, IRegion } from "@/types/markers";
 export default function BottomSheetItem({
   marker,
   location,
-  onFocusUserCurrentLocation,
+  onSetLocation,
+  onFocusLocation,
 }: {
   marker: IMarker;
   location: Location.LocationObject | null;
-  onFocusUserCurrentLocation: (location: IRegion) => void;
+  onSetLocation: (longitude: number, latitude: number) => void;
+  onFocusLocation: (location: IRegion) => void;
 }) {
   return (
     <Pressable
       onPress={() => {
-        onFocusUserCurrentLocation({
+        onFocusLocation({
           latitude: marker.latitude,
           longitude: marker.longitude,
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         });
+        onSetLocation(marker.longitude, marker.latitude);
       }}
       style={styles.bottomSheetItemContainer}
     >
