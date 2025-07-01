@@ -1,14 +1,17 @@
 import * as Location from "expo-location";
 import { Colors } from "@/constants/Colors";
+import BottomSheet from "@gorhom/bottom-sheet";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Fish, Locate, Navigation } from "lucide-react-native";
 import { Pressable, StyleSheet, View, Text } from "react-native";
 import MapView, { PROVIDER_DEFAULT, Marker } from "react-native-maps";
-import { Fish, Locate, Navigation, Crown } from "lucide-react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { markers } from "@/utils/markers";
+import { IRegion } from "@/types/markers";
+
+import BottomSheetItem from "@/components/BottomSheetItem";
 
 export default function HomeScreen() {
   const [location, setLocation] = useState<Location.LocationObject | null>(
@@ -55,12 +58,7 @@ export default function HomeScreen() {
     );
   }
 
-  function focusUserCurrentLocation(currentLocation?: {
-    latitude: number;
-    longitude: number;
-    latitudeDelta: number;
-    longitudeDelta: number;
-  }) {
+  function focusUserCurrentLocation(currentLocation?: IRegion) {
     getUserCurrentLocation();
 
     const defaultLocation = {
@@ -75,6 +73,10 @@ export default function HomeScreen() {
       { duration: 500 }
     );
   }
+
+  const sortedMarkers = useMemo(() => {
+    return markers.sort((a, b) => b.fish - a.fish);
+  }, []);
 
   return (
     <SafeAreaView
@@ -106,11 +108,7 @@ export default function HomeScreen() {
                   <View
                     style={{
                       backgroundColor:
-                        markers.reduce(
-                          (max, marker) =>
-                            marker.fish > max.fish ? marker : max,
-                          markers[0]
-                        ).fish === marker.fish
+                        sortedMarkers[0].fish === marker.fish
                           ? Colors.dark.accent
                           : Colors.dark.text,
                       borderRadius: 9999,
@@ -165,9 +163,7 @@ export default function HomeScreen() {
           }}
           style={{ backgroundColor: "transparent" }}
         >
-          <BottomSheetScrollView
-            contentContainerStyle={styles.bottomSheetContentContainer}
-          >
+          <View style={styles.bottomSheetContentContainer}>
             <Text style={{ fontWeight: "bold", fontSize: 20 }}>
               Spots near you
             </Text>
@@ -177,82 +173,19 @@ export default function HomeScreen() {
                 height: 20,
               }}
             ></View>
-            {markers
-              .sort((a, b) => b.fish - a.fish)
-              .map((marker) => (
-                <Pressable
-                  key={marker.id}
-                  onPress={() => {
-                    focusUserCurrentLocation({
-                      latitude: marker.latitude,
-                      longitude: marker.longitude,
-                      latitudeDelta: 0.01,
-                      longitudeDelta: 0.01,
-                    });
-                  }}
-                >
-                  <View style={styles.bottomSheetItemContainer}>
-                    <View>
-                      <Text style={{ fontSize: 18, fontWeight: 700 }}>
-                        {marker.location}
-                      </Text>
-                      <Text style={{ fontSize: 16, color: Colors.dark.tint }}>
-                        {(() => {
-                          if (!location?.coords) return "N/A";
-                          const lat1 = location.coords.latitude;
-                          const lon1 = location.coords.longitude;
-                          const lat2 = marker.latitude;
-                          const lon2 = marker.longitude;
-
-                          const R = 6371;
-                          const dLat = ((lat2 - lat1) * Math.PI) / 180;
-                          const dLon = ((lon2 - lon1) * Math.PI) / 180;
-                          const a =
-                            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                            Math.cos((lat1 * Math.PI) / 180) *
-                              Math.cos((lat2 * Math.PI) / 180) *
-                              Math.sin(dLon / 2) *
-                              Math.sin(dLon / 2);
-                          const c =
-                            2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                          const distance = R * c;
-
-                          return distance < 1
-                            ? `${(distance * 1000).toFixed(0)} m`
-                            : `${distance.toFixed(1)} km`;
-                        })()}
-                      </Text>
-                    </View>
-                    <View style={{ alignItems: "flex-end" }}>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          gap: 4,
-                        }}
-                      >
-                        {markers.reduce(
-                          (max, marker) =>
-                            marker.fish > max.fish ? marker : max,
-                          markers[0]
-                        ).fish === marker.fish ? (
-                          <Crown
-                            color={Colors.dark.accent}
-                            fill={Colors.dark.accent}
-                          />
-                        ) : null}
-                        <Text style={{ fontSize: 18, fontWeight: 700 }}>
-                          {marker.fish}
-                        </Text>
-                      </View>
-                      <Text style={{ fontSize: 16, color: Colors.dark.tint }}>
-                        Fish Score
-                      </Text>
-                    </View>
-                  </View>
-                </Pressable>
-              ))}
-          </BottomSheetScrollView>
+            <FlatList
+              data={sortedMarkers}
+              keyExtractor={(marker) => marker.id.toString()}
+              scrollEnabled
+              renderItem={(marker) => (
+                <BottomSheetItem
+                  marker={marker.item}
+                  location={location}
+                  onFocusUserCurrentLocation={focusUserCurrentLocation}
+                />
+              )}
+            />
+          </View>
         </BottomSheet>
       </GestureHandlerRootView>
     </SafeAreaView>
@@ -284,13 +217,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 12,
     alignItems: "center",
-  },
-  bottomSheetItemContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    marginBottom: 8,
   },
 });
 
