@@ -4,6 +4,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Pressable, StyleSheet, View, Text } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
+import { Fish, Locate, Navigation, Crown } from "lucide-react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+
 import { markers } from "@/utils/markers";
 
 export default function HomeScreen() {
@@ -11,6 +15,11 @@ export default function HomeScreen() {
     null
   );
   const mapRef = useRef<MapView>(null);
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
+
   async function getUserCurrentLocation() {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -66,11 +75,13 @@ export default function HomeScreen() {
       { duration: 500 }
     );
   }
+
   return (
     <SafeAreaView
       style={{ backgroundColor: Colors.dark.background, flex: 1 }}
       edges={["top"]}
     >
+      <GestureHandlerRootView style={styles.bottomSheetContainer}>
         <View style={{ flex: 1, position: "relative" }}>
           <MapView
             style={styles.map}
@@ -137,6 +148,112 @@ export default function HomeScreen() {
             </Pressable>
           </View>
         </View>
+        <BottomSheet
+          ref={bottomSheetRef}
+          snapPoints={snapPoints}
+          enableOverDrag={false}
+          enableDynamicSizing={false}
+          backgroundStyle={{
+            borderTopLeftRadius: 70,
+            borderTopRightRadius: 70,
+            backgroundColor: Colors.dark.text,
+          }}
+          handleIndicatorStyle={{
+            backgroundColor: Colors.dark.tint,
+            height: 8,
+            width: 82,
+          }}
+          style={{ backgroundColor: "transparent" }}
+        >
+          <BottomSheetScrollView
+            contentContainerStyle={styles.bottomSheetContentContainer}
+          >
+            <Text style={{ fontWeight: "bold", fontSize: 24 }}>
+              Spots near you
+            </Text>
+            <View
+              style={{
+                backgroundColor: Colors.dark.background,
+                height: 20,
+              }}
+            ></View>
+            {markers
+              .sort((a, b) => b.fish - a.fish)
+              .map((marker) => (
+                <Pressable
+                  key={marker.id}
+                  onPress={() => {
+                    focusUserCurrentLocation({
+                      latitude: marker.latitude,
+                      longitude: marker.longitude,
+                      latitudeDelta: 0.01,
+                      longitudeDelta: 0.01,
+                    });
+                  }}
+                >
+                  <View style={styles.bottomSheetItemContainer}>
+                    <View>
+                      <Text style={{ fontSize: 24, fontWeight: 700 }}>
+                        {marker.location}
+                      </Text>
+                      <Text style={{ fontSize: 18, color: Colors.dark.tint }}>
+                        {(() => {
+                          if (!location?.coords) return "N/A";
+                          const lat1 = location.coords.latitude;
+                          const lon1 = location.coords.longitude;
+                          const lat2 = marker.latitude;
+                          const lon2 = marker.longitude;
+
+                          const R = 6371;
+                          const dLat = ((lat2 - lat1) * Math.PI) / 180;
+                          const dLon = ((lon2 - lon1) * Math.PI) / 180;
+                          const a =
+                            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                            Math.cos((lat1 * Math.PI) / 180) *
+                              Math.cos((lat2 * Math.PI) / 180) *
+                              Math.sin(dLon / 2) *
+                              Math.sin(dLon / 2);
+                          const c =
+                            2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                          const distance = R * c;
+
+                          return distance < 1
+                            ? `${(distance * 1000).toFixed(0)} m`
+                            : `${distance.toFixed(1)} km`;
+                        })()}
+                      </Text>
+                    </View>
+                    <View style={{ alignItems: "flex-end" }}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: 4,
+                        }}
+                      >
+                        {markers.reduce(
+                          (max, marker) =>
+                            marker.fish > max.fish ? marker : max,
+                          markers[0]
+                        ).fish === marker.fish ? (
+                          <Crown
+                            color={Colors.dark.accent}
+                            fill={Colors.dark.accent}
+                          />
+                        ) : null}
+                        <Text style={{ fontSize: 24, fontWeight: 700 }}>
+                          {marker.fish}
+                        </Text>
+                      </View>
+                      <Text style={{ fontSize: 18, color: Colors.dark.tint }}>
+                        Fish Score
+                      </Text>
+                    </View>
+                  </View>
+                </Pressable>
+              ))}
+          </BottomSheetScrollView>
+        </BottomSheet>
       </GestureHandlerRootView>
     </SafeAreaView>
   );
@@ -158,6 +275,22 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 6,
     rowGap: 12,
+  },
+  bottomSheetContainer: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+  bottomSheetContentContainer: {
+    flex: 1,
+    padding: 12,
+    alignItems: "center",
+  },
+  bottomSheetItemContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    marginBottom: 8,
   },
 });
 
