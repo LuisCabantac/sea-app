@@ -159,7 +159,16 @@ export default function CoachScreen() {
                   index === messages.length - 1 ||
                   messages[index + 1].isUser !== message.isUser
                 ) && <View style={{ width: 36 }} />}
-              <View style={styles.messageBubble}>
+              <View
+                style={[
+                  styles.messageBubble,
+                  {
+                    backgroundColor: message.isUser
+                      ? Colors.dark.cardSecondary
+                      : Colors.dark.card,
+                  },
+                ]}
+              >
                 {message.isUser ? (
                   <Text style={styles.userMessage}>{message.text}</Text>
                 ) : (
