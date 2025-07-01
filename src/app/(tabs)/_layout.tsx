@@ -24,6 +24,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Find",
+          headerShown: false,
           tabBarLabel: () => null,
           tabBarIcon: ({ color, focused }) => (
             <View
@@ -41,6 +42,42 @@ export default function TabLayout() {
         name="coach"
         options={{
           title: "Coach",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: Colors.dark.background,
+            borderBottomColor: Colors.dark.card,
+            borderBottomWidth: 1,
+          },
+          headerTitle: () => null,
+          headerLeft: () => (
+            <View
+              style={{
+                paddingHorizontal: 12,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 10,
+              }}
+            >
+              <View
+                style={{
+                  backgroundColor: Colors.dark.card,
+                  borderRadius: 9999,
+                  padding: 8,
+                }}
+              >
+                <Fish size={26} color={Colors.dark.text} />
+              </View>
+              <Text
+                style={{
+                  color: Colors.dark.text,
+                  fontSize: 18,
+                  fontWeight: "bold",
+                }}
+              >
+                Sea Coach
+              </Text>
+            </View>
+          ),
           tabBarLabel: () => null,
           tabBarIcon: ({ color, focused }) => (
             <View
