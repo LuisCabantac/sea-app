@@ -11,9 +11,6 @@ export default {
     ios: {
       supportsTablet: true,
       bundleIdentifier: "com.luiscabantac.seaapp",
-      config: {
-        googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
-      },
     },
     android: {
       adaptiveIcon: {
