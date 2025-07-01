@@ -168,7 +168,7 @@ export default function HomeScreen() {
           <BottomSheetScrollView
             contentContainerStyle={styles.bottomSheetContentContainer}
           >
-            <Text style={{ fontWeight: "bold", fontSize: 24 }}>
+            <Text style={{ fontWeight: "bold", fontSize: 20 }}>
               Spots near you
             </Text>
             <View
@@ -193,10 +193,10 @@ export default function HomeScreen() {
                 >
                   <View style={styles.bottomSheetItemContainer}>
                     <View>
-                      <Text style={{ fontSize: 24, fontWeight: 700 }}>
+                      <Text style={{ fontSize: 18, fontWeight: 700 }}>
                         {marker.location}
                       </Text>
-                      <Text style={{ fontSize: 18, color: Colors.dark.tint }}>
+                      <Text style={{ fontSize: 16, color: Colors.dark.tint }}>
                         {(() => {
                           if (!location?.coords) return "N/A";
                           const lat1 = location.coords.latitude;
@@ -241,11 +241,11 @@ export default function HomeScreen() {
                             fill={Colors.dark.accent}
                           />
                         ) : null}
-                        <Text style={{ fontSize: 24, fontWeight: 700 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 700 }}>
                           {marker.fish}
                         </Text>
                       </View>
-                      <Text style={{ fontSize: 18, color: Colors.dark.tint }}>
+                      <Text style={{ fontSize: 16, color: Colors.dark.tint }}>
                         Fish Score
                       </Text>
                     </View>
