@@ -39,7 +39,14 @@ export default function CoachScreen() {
       setMessage("");
       setIsLoading(true);
 
-      const response = await gemini.ask(message);
+      const conversationHistory = messages
+        .slice(-10)
+        .map((msg) => msg.text)
+        .join("\n");
+
+      const contextualMessage = `Previous conversation:\n${conversationHistory}\n\nUser: ${message}`;
+
+      const response = await gemini.ask(contextualMessage);
 
       const geminiMessage = {
         text: response,
