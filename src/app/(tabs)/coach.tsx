@@ -172,13 +172,7 @@ export default function CoachScreen() {
                 {message.isUser ? (
                   <Text style={styles.userMessage}>{message.text}</Text>
                 ) : (
-                  <Markdown
-                    style={{
-                      body: styles.geminiMessage,
-                    }}
-                  >
-                    {message.text}
-                  </Markdown>
+                  <Markdown style={markdownStyles}>{message.text}</Markdown>
                 )}
               </View>
               {message.isUser &&
@@ -294,11 +288,18 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     width: "79%",
   },
-  userMessage: { color: Colors.dark.text, padding: 14 },
+  userMessage: {
+    color: Colors.dark.text,
+    padding: 14,
+    fontFamily: "BiotifRegular",
+    fontSize: 16,
+  },
   geminiMessage: {
     color: Colors.dark.text,
     paddingHorizontal: 14,
     paddingVertical: 0,
+    fontFamily: "BiotifRegular",
+    fontSize: 16,
   },
   messageIconContainer: {
     backgroundColor: Colors.dark.card,
@@ -326,6 +327,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     maxHeight: 120,
     minHeight: 58,
+    fontFamily: "BiotifRegular",
   },
   sendButtonContainer: {
     justifyContent: "center",
@@ -353,3 +355,65 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
   },
 });
+
+const markdownStyles = {
+  body: styles.geminiMessage,
+  link: {
+    color: Colors.dark.tint,
+    textDecorationLine: "underline" as const,
+  },
+  table: {
+    borderWidth: 1,
+    borderColor: Colors.dark.card,
+    borderRadius: 8,
+    marginVertical: 8,
+  },
+  thead: {
+    backgroundColor: Colors.dark.card,
+  },
+  th: {
+    color: Colors.dark.text,
+    padding: 12,
+    borderWidth: 1,
+    fontFamily: "BiotifBold",
+    borderColor: Colors.dark.card,
+  },
+  td: {
+    color: Colors.dark.text,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: Colors.dark.card,
+  },
+  code_inline: {
+    backgroundColor: Colors.dark.card,
+    color: Colors.dark.tint,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 4,
+    fontFamily: "monospace",
+  },
+  code_block: {
+    backgroundColor: Colors.dark.card,
+    color: Colors.dark.text,
+    padding: 12,
+    borderRadius: 8,
+    marginVertical: 8,
+    fontFamily: "monospace",
+  },
+  blockquote: {
+    backgroundColor: Colors.dark.card,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.dark.tint,
+    paddingLeft: 12,
+    marginVertical: 8,
+    fontFamily: "BiotifItalic",
+  },
+  strong: {
+    color: Colors.dark.text,
+    fontFamily: "BiotifBold",
+  },
+  em: {
+    fontFamily: "BiotifItalic",
+    color: Colors.dark.text,
+  },
+};
