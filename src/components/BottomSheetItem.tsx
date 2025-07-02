@@ -31,8 +31,16 @@ export default function BottomSheetItem({
       style={styles.bottomSheetItemContainer}
     >
       <View>
-        <Text style={{ fontSize: 18, fontWeight: 700 }}>{marker.location}</Text>
-        <Text style={{ fontSize: 16, color: Colors.dark.tint }}>
+        <Text style={{ fontSize: 18, fontFamily: "BiotifSemiBold" }}>
+          {marker.location}
+        </Text>
+        <Text
+          style={{
+            fontSize: 16,
+            color: Colors.dark.tint,
+            fontFamily: "BiotifMedium",
+          }}
+        >
           {(() => {
             if (!location?.coords) return "N/A";
             const lat1 = location.coords.latitude;
@@ -72,9 +80,17 @@ export default function BottomSheetItem({
           ).fish === marker.fish ? (
             <Crown color={Colors.dark.accent} fill={Colors.dark.accent} />
           ) : null}
-          <Text style={{ fontSize: 18, fontWeight: 700 }}>{marker.fish}</Text>
+          <Text style={{ fontSize: 18, fontFamily: "BiotifSemiBold" }}>
+            {marker.fish}
+          </Text>
         </View>
-        <Text style={{ fontSize: 16, color: Colors.dark.tint }}>
+        <Text
+          style={{
+            fontSize: 16,
+            color: Colors.dark.tint,
+            fontFamily: "BiotifMedium",
+          }}
+        >
           Fish Score
         </Text>
       </View>

@@ -5,7 +5,12 @@ import { StatusBar } from "expo-status-bar";
 
 export default function RootLayout() {
   const [loaded] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    BiotifRegular: require("../assets/fonts/Biotif-Regular.ttf"),
+    BiotifItalic: require("../assets/fonts/Biotif-RegularItalic.ttf"),
+    BiotifMedium: require("../assets/fonts/Biotif-Medium.ttf"),
+    BiotifSemiBold: require("../assets/fonts/Biotif-SemiBold.ttf"),
+    BiotifBold: require("../assets/fonts/Biotif-Bold.ttf"),
+    BiotifBlack: require("../assets/fonts/Biotif-Black.ttf"),
   });
 
   if (!loaded) {

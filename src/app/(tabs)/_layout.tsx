@@ -31,7 +31,13 @@ export default function TabLayout() {
               style={[styles.tabBarIcon, focused && styles.activeTabBarIcon]}
             >
               <Map size={26} color={color} />
-              <Text style={{ color, fontSize: 12, fontWeight: "bold" }}>
+              <Text
+                style={{
+                  color,
+                  fontSize: 12,
+                  fontFamily: "BiotifBold",
+                }}
+              >
                 Find
               </Text>
             </View>
@@ -70,8 +76,8 @@ export default function TabLayout() {
               <Text
                 style={{
                   color: Colors.dark.text,
-                  fontSize: 18,
-                  fontWeight: "bold",
+                  fontSize: 20,
+                  fontFamily: "BiotifBold",
                 }}
               >
                 Sea Coach
@@ -84,7 +90,13 @@ export default function TabLayout() {
               style={[styles.tabBarIcon, focused && styles.activeTabBarIcon]}
             >
               <Fish size={26} color={color} />
-              <Text style={{ color, fontSize: 12, fontWeight: "bold" }}>
+              <Text
+                style={{
+                  color,
+                  fontSize: 12,
+                  fontFamily: "BiotifBold",
+                }}
+              >
                 Coach
               </Text>
             </View>
