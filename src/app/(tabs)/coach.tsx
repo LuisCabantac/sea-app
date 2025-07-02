@@ -1,7 +1,7 @@
 import Gemini from "gemini-ai";
 import { useEffect, useRef, useState } from "react";
 import Markdown from "react-native-markdown-display";
-import { ChevronDown, Fish, Send, User } from "lucide-react-native";
+import { ChevronDown, Fish, Send } from "lucide-react-native";
 import {
   Animated,
   NativeScrollEvent,
@@ -18,6 +18,11 @@ import { Colors } from "@/constants/Colors";
 import { IMessage } from "@/types/message";
 
 const gemini = new Gemini(process.env.EXPO_PUBLIC_GOOGLE_GEMINI_API_KEY!);
+const chat = gemini.createChat({
+  model: "gemini-2.0-flash-lite",
+  systemInstruction:
+    "You are Fish Coach, an expert fishing advisor. Provide helpful advice about fishing techniques, fish behavior, equipment, and locations. Keep responses conversational and encouraging.",
+});
 
 export default function CoachScreen() {
   const [message, setMessage] = useState("");
@@ -39,16 +44,25 @@ export default function CoachScreen() {
       setMessage("");
       setIsLoading(true);
 
-      const response = await gemini.ask(message);
+      try {
+        const response = await chat.ask(message);
 
-      const geminiMessage = {
-        text: response,
-        isUser: false,
-        createdAt: new Date(),
-      };
-      setMessages((prev) => [...prev, geminiMessage]);
-
-      setIsLoading(false);
+        const geminiMessage = {
+          text: response,
+          isUser: false,
+          createdAt: new Date(),
+        };
+        setMessages((prev) => [...prev, geminiMessage]);
+      } catch {
+        const errorMessage = {
+          text: "Sorry, I'm experiencing high demand right now. Please try again in a moment.",
+          isUser: false,
+          createdAt: new Date(),
+        };
+        setMessages((prev) => [...prev, errorMessage]);
+      } finally {
+        setIsLoading(false);
+      }
     }
   }
 
@@ -152,26 +166,22 @@ export default function CoachScreen() {
                   index === messages.length - 1 ||
                   messages[index + 1].isUser !== message.isUser
                 ) && <View style={{ width: 36 }} />}
-              <View style={styles.messageBubble}>
+              <View
+                style={[
+                  styles.messageBubble,
+                  {
+                    backgroundColor: message.isUser
+                      ? Colors.dark.cardSecondary
+                      : Colors.dark.card,
+                  },
+                ]}
+              >
                 {message.isUser ? (
                   <Text style={styles.userMessage}>{message.text}</Text>
                 ) : (
-                  <Markdown
-                    style={{
-                      body: styles.geminiMessage,
-                    }}
-                  >
-                    {message.text}
-                  </Markdown>
+                  <Markdown style={markdownStyles}>{message.text}</Markdown>
                 )}
               </View>
-              {message.isUser &&
-                (index === messages.length - 1 ||
-                  messages[index + 1].isUser !== message.isUser) && (
-                  <View style={styles.messageIconContainer}>
-                    <User size={24} color={Colors.dark.text} />
-                  </View>
-                )}
               {message.isUser &&
                 !(
                   index === messages.length - 1 ||
@@ -285,11 +295,18 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     width: "79%",
   },
-  userMessage: { color: Colors.dark.text, padding: 14 },
+  userMessage: {
+    color: Colors.dark.text,
+    padding: 14,
+    fontFamily: "BiotifRegular",
+    fontSize: 16,
+  },
   geminiMessage: {
     color: Colors.dark.text,
     paddingHorizontal: 14,
     paddingVertical: 0,
+    fontFamily: "BiotifRegular",
+    fontSize: 16,
   },
   messageIconContainer: {
     backgroundColor: Colors.dark.card,
@@ -317,6 +334,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     maxHeight: 120,
     minHeight: 58,
+    fontFamily: "BiotifRegular",
   },
   sendButtonContainer: {
     justifyContent: "center",
@@ -344,3 +362,65 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
   },
 });
+
+const markdownStyles = {
+  body: styles.geminiMessage,
+  link: {
+    color: Colors.dark.tint,
+    textDecorationLine: "underline" as const,
+  },
+  table: {
+    borderWidth: 1,
+    borderColor: Colors.dark.card,
+    borderRadius: 8,
+    marginVertical: 8,
+  },
+  thead: {
+    backgroundColor: Colors.dark.card,
+  },
+  th: {
+    color: Colors.dark.text,
+    padding: 12,
+    borderWidth: 1,
+    fontFamily: "BiotifBold",
+    borderColor: Colors.dark.card,
+  },
+  td: {
+    color: Colors.dark.text,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: Colors.dark.card,
+  },
+  code_inline: {
+    backgroundColor: Colors.dark.card,
+    color: Colors.dark.tint,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 4,
+    fontFamily: "monospace",
+  },
+  code_block: {
+    backgroundColor: Colors.dark.card,
+    color: Colors.dark.text,
+    padding: 12,
+    borderRadius: 8,
+    marginVertical: 8,
+    fontFamily: "monospace",
+  },
+  blockquote: {
+    backgroundColor: Colors.dark.card,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.dark.tint,
+    paddingLeft: 12,
+    marginVertical: 8,
+    fontFamily: "BiotifItalic",
+  },
+  strong: {
+    color: Colors.dark.text,
+    fontFamily: "BiotifBold",
+  },
+  em: {
+    fontFamily: "BiotifItalic",
+    color: Colors.dark.text,
+  },
+};

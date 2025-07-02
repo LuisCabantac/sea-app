@@ -1,22 +1,29 @@
 export default {
   expo: {
-    name: "sea-app",
+    name: "Sea",
     slug: "sea-app",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./src/assets/images/icon.png",
+    icon: "./src/assets/icons/default-icon.png",
     scheme: "seaapp",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
       bundleIdentifier: "com.luiscabantac.seaapp",
+      icon: {
+        dark: "./src/assets/icons/ios-dark.png",
+        light: "./src/assets/icons/ios-light.png",
+        tinted: "./src/assets/icons/ios-tinted.png",
+      },
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: "./src/assets/images/adaptive-icon.png",
-        backgroundColor: "#ffffff",
+        foregroundImage: "./src/assets/icons/default-icon.png",
+        monochromeImage: "./src/assets/icons/adaptive-icon.png",
+        backgroundColor: "#000",
       },
+      icon: "./src/assets/icons/default-icon.png",
       edgeToEdgeEnabled: true,
       package: "com.luiscabantac.seaapp",
       config: {
@@ -28,17 +35,21 @@ export default {
     web: {
       bundler: "metro",
       output: "static",
-      favicon: "./src/assets/images/favicon.png",
+      favicon: "./src/assets/icons/default-icon.png",
     },
     plugins: [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          image: "./src/assets/images/splash-icon.png",
+          image: "./src/assets/icons/splash-icon-light.png",
           imageWidth: 200,
           resizeMode: "contain",
-          backgroundColor: "#ffffff",
+          backgroundColor: "#000",
+          dark: {
+            image: "./src/assets/icons/splash-icon-dark.png",
+            backgroundColor: "#000",
+          },
         },
       ],
       [

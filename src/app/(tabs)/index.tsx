@@ -130,8 +130,8 @@ export default function HomeScreen() {
                     <Text
                       style={{
                         color: Colors.dark.tint,
-                        fontWeight: "bold",
-                        fontSize: 12,
+                        fontSize: 10,
+                        fontFamily: "BiotifSemiBold",
                       }}
                     >
                       {marker.fish}
@@ -176,7 +176,12 @@ export default function HomeScreen() {
           style={{ backgroundColor: "transparent" }}
         >
           <View style={styles.bottomSheetContentContainer}>
-            <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+            <Text
+              style={{
+                fontSize: 20,
+                fontFamily: "BiotifBold",
+              }}
+            >
               Spots near you
             </Text>
             <View

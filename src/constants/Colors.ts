@@ -20,6 +20,7 @@ export const Colors = {
     text: "#ECEDEE",
     background: "#000",
     card: "#202938",
+    cardSecondary: "#363e4c",
     cardForeground: "#636974",
     button: "#2264eb",
     tint: tintColorDark,
