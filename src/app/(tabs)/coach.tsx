@@ -18,6 +18,11 @@ import { Colors } from "@/constants/Colors";
 import { IMessage } from "@/types/message";
 
 const gemini = new Gemini(process.env.EXPO_PUBLIC_GOOGLE_GEMINI_API_KEY!);
+const chat = gemini.createChat({
+  model: "gemini-2.0-flash-lite",
+  systemInstruction:
+    "You are Fish Coach, an expert fishing advisor. Provide helpful advice about fishing techniques, fish behavior, equipment, and locations. Keep responses conversational and encouraging.",
+});
 
 export default function CoachScreen() {
   const [message, setMessage] = useState("");
@@ -39,23 +44,25 @@ export default function CoachScreen() {
       setMessage("");
       setIsLoading(true);
 
-      const conversationHistory = messages
-        .slice(-10)
-        .map((msg) => msg.text)
-        .join("\n");
+      try {
+        const response = await chat.ask(message);
 
-      const contextualMessage = `Previous conversation:\n${conversationHistory}\n\nUser: ${message}`;
-
-      const response = await gemini.ask(contextualMessage);
-
-      const geminiMessage = {
-        text: response,
-        isUser: false,
-        createdAt: new Date(),
-      };
-      setMessages((prev) => [...prev, geminiMessage]);
-
-      setIsLoading(false);
+        const geminiMessage = {
+          text: response,
+          isUser: false,
+          createdAt: new Date(),
+        };
+        setMessages((prev) => [...prev, geminiMessage]);
+      } catch {
+        const errorMessage = {
+          text: "Sorry, I'm experiencing high demand right now. Please try again in a moment.",
+          isUser: false,
+          createdAt: new Date(),
+        };
+        setMessages((prev) => [...prev, errorMessage]);
+      } finally {
+        setIsLoading(false);
+      }
     }
   }
 
